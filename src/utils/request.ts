@@ -1,15 +1,14 @@
 import type {AxiosError, AxiosInstance, AxiosRequestConfig, AxiosResponse, InternalAxiosRequestConfig} from 'axios'
 import axios from 'axios'
+import {AxiosLoading} from './loading'
 import {STORAGE_AUTHORIZE_KEY, useAuthorization} from '~/composables/authorization'
 import {ContentTypeEnum, RequestEnum} from '~#/http-enum'
 import router from '~/router'
 
 export interface ResponseBody<T = any> {
-    id: string
     code: number
     data?: T
     msg: string
-    time: string
 }
 
 export interface RequestConfigExtra {
@@ -23,8 +22,8 @@ const instance: AxiosInstance = axios.create({
     timeout: 60000,
     headers: {'Content-Type': ContentTypeEnum.JSON},
 })
+const axiosLoading = new AxiosLoading()
 
-// const axiosLoading = new AxiosLoading()
 async function requestHandler(config: InternalAxiosRequestConfig & RequestConfigExtra): Promise<InternalAxiosRequestConfig> {
     // 处理请求前的url
     if (
@@ -44,8 +43,9 @@ async function requestHandler(config: InternalAxiosRequestConfig & RequestConfig
     // 增加多语言的配置
     // const { locale } = useI18nLocale()
     // config.headers.set('Accept-Language', locale.value ?? 'zh-CN')
-    // if (config.loading)
-    //     axiosLoading.addLoading()
+    config.headers.set('Accept-Language', 'zh-CN')
+    if (config.loading)
+        axiosLoading.addLoading()
     return config
 }
 
@@ -114,17 +114,17 @@ instance.interceptors.response.use(responseHandler, errorHandler)
 export default instance
 
 function instancePromise<R = any, T = any>(options: AxiosOptions<T> & RequestConfigExtra): Promise<ResponseBody<R>> {
-    // const { loading } = options
+    const {loading} = options
     return new Promise((resolve, reject) => {
         instance.request(options).then((res) => {
             resolve(res as any)
         }).catch((e: Error | AxiosError) => {
             reject(e)
         })
-        // .finally(() => {
-        //     if (loading)
-        //         axiosLoading.closeLoading()
-        // })
+            .finally(() => {
+                if (loading)
+                    axiosLoading.closeLoading()
+            })
     })
 }
 

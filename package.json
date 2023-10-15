@@ -4,6 +4,7 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
+    "dev": "vite",
     "dev:development": "vite",
     "build": "vue-tsc && vite build",
     "preview": "vite preview"
@@ -24,6 +25,7 @@
     "@types/node": "^20.8.5",
     "@v-c/utils": "^0.0.26",
     "@vitejs/plugin-vue": "^4.2.3",
+    "@vitejs/plugin-vue-jsx": "^3.0.2",
     "less": "^4.2.0",
     "picocolors": "^1.0.0",
     "typescript": "^5.0.2",

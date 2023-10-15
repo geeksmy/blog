@@ -32,5 +32,10 @@ export default defineConfig({
         presetIcons({
             warn: true
         })
+    ],
+    rules: [
+        [/^grid-area-(.+)$/, ([, s]) => {
+            return {'grid-area': s}
+        }],
     ]
 })
